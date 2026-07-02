@@ -1,0 +1,231 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+  color: #e8e8e8;
+  user-select: none;
+}
+
+.hover-zone {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: 340px;
+}
+
+.drag-handle {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+.badge {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  white-space: nowrap;
+  width: fit-content;
+  max-width: 340px;
+  overflow: hidden;
+}
+
+.badge-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.badge-warning {
+  color: #f2c94c;
+  font-size: 12px;
+}
+
+.badge-name {
+  font-weight: 600;
+  margin-right: 2px;
+}
+
+.badge-price {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.dir-up {
+  color: #ff5c5c;
+}
+
+.dir-down {
+  color: #3ddc84;
+}
+
+.dir-flat {
+  color: #c9c9c9;
+}
+
+.panel {
+  margin-top: 6px;
+  width: 260px;
+  padding: 8px 10px 10px;
+  border-radius: 10px;
+  background: rgba(18, 18, 22, 0.92);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.panel-title {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.panel-header-actions button {
+  background: transparent;
+  border: none;
+  color: #cfcfcf;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.panel-header-actions button:hover {
+  color: #fff;
+}
+
+.panel-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.panel-item {
+  padding: 6px 0;
+}
+
+.panel-item-separated {
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.panel-item-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.panel-item-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+.remove-btn:hover {
+  color: #ff5c5c;
+}
+
+.panel-item-price {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.panel-item-volume {
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.panel-hint {
+  color: #f2c94c;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.autocomplete {
+  position: relative;
+  margin-top: 8px;
+}
+
+.autocomplete input {
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 12px;
+}
+
+.autocomplete input:disabled {
+  opacity: 0.5;
+}
+
+.autocomplete-hint {
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  max-height: 160px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 4px;
+  background: rgba(24, 24, 28, 0.97);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  z-index: 10;
+}
+
+.autocomplete-list li {
+  display: flex;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.autocomplete-list li:hover,
+.autocomplete-list li.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.autocomplete-code {
+  font-weight: 700;
+  min-width: 42px;
+}
+
+.autocomplete-name {
+  opacity: 0.85;
+}

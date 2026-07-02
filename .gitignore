@@ -1,0 +1,19 @@
+# 機密設定，不可進版本控制
+.env
+.env.local
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node / Electron
+node_modules/
+widget/dist/
+widget/dist-electron/
+widget/tsconfig.tsbuildinfo
+
+# 執行期產生的資料（快取、log）
+data/
+logs/
+*.log
