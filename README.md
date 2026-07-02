@@ -74,7 +74,7 @@ npm start          # 用已 build 好的版本
 npm run dev         # 開發模式，改程式碼會自動熱重載
 ```
 
-Windows + Git Bash 環境下，也可以直接用：
+**僅限 Windows + Git Bash**（用到 `taskkill`/`powershell.exe`，macOS/Linux 無法使用，請照上面手動指令啟停）：
 
 ```bash
 ./widget/start.sh   # 會自動檢查/啟動後端，再啟動小工具
