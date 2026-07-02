@@ -21,7 +21,7 @@ export default function Panel({ quotes, allSymbols, visibleSymbols, fugleEnabled
   return (
     <div className="panel no-drag">
       <div className="panel-header">
-        <span className="panel-title">股價小工具</span>
+        <span className="panel-title">即時股價(每5秒更新)</span>
         <div className="panel-header-actions">
           <button title="收合成只顯示加權指數" onClick={onMinimize}>
             —
