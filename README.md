@@ -78,7 +78,7 @@ npm run dev         # 開發模式，改程式碼會自動熱重載
 
 ```bash
 ./widget/start.sh   # 會自動檢查/啟動後端，再啟動小工具
-./widget/stop.sh    # 關閉小工具
+./widget/stop.sh    # 關閉小工具，順便關掉後端
 ```
 
 驗證後端：
