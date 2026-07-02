@@ -1,5 +1,5 @@
 {
-  "name": "stock-widget",
+  "name": "tw-stock-widget",
   "private": true,
   "version": "0.1.0",
   "main": "dist-electron/main.js",
