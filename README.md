@@ -95,6 +95,7 @@ npx vite build                      # 重新 build 出 dist/
 
 只改了 `src/` 底下的 React 文字/樣式（沒動 `electron/` 底下的 `.ts`）時，`tsc -p tsconfig.electron.json` 可以省略，跑 `npx vite build` 就好。build 完記得重啟小工具（`./widget/start.sh` 或你原本的啟動方式）。
 
+如果想要邊改邊看即時生效，開發時可以改用 `npm run dev` 取代 `npm start`/`start.sh`——那個模式會啟動 Vite dev server 做熱重載，不需要手動重新 build。
 
 
 ## 設定
