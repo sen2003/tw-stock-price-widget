@@ -8,7 +8,7 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_env(path: Path) -> dict[str, str]:
-    """解析 .env 成一個字典直接回傳，刻意不寫進 os.environ——避免 API_KEY／
+    """解析 .env 成一個字典直接回傳，不寫進 os.environ——避免 API_KEY／
     FUGLE_API_KEY 這種機密出現在這個行程的環境變數區塊裡（Process Explorer
     之類的工具可以直接看到別的行程的環境變數）。"""
     if not path.exists():
