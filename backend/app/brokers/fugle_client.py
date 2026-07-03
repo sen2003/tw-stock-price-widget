@@ -23,6 +23,8 @@ logger = logging.getLogger("fugle")
 QUOTE_TTL = 2.0  # 報價快取秒數，避免高頻輪詢打爆富果額度
 CANDLE_TTL = 20.0
 TRADES_TTL = 5.0
+RATE_LIMIT_COOLDOWN = 30.0  # 收到 429 後這段時間內回報 rate_limited，給小工具顯示警告用
+RATE_LIMIT_WARN_THRESHOLD = 2  # 冷卻窗口內至少要中幾次 429 才算「超過」，不是剛好卡到而已
 
 
 def _tick_size(price: float) -> float:
@@ -102,10 +104,17 @@ class FugleMarketData:
         self._tick_version = 0
         self._five_version = 0
         self._seed_attempt: dict[str, float] = {}
+        self._rate_limited_until = 0.0
+        self._rate_limit_hits = 0
+        self._rate_limit_hit_window_until = 0.0
 
     @property
     def enabled(self) -> bool:
         return bool(self.settings.fugle_api_key)
+
+    @property
+    def is_rate_limited(self) -> bool:
+        return time.monotonic() < self._rate_limited_until
 
     def _client(self):
         if self._rest is None:
@@ -125,6 +134,17 @@ class FugleMarketData:
         try:
             raw = self._client().stock.intraday.quote(symbol=symbol)
         except Exception as exc:  # noqa: BLE001
+            if getattr(exc, "status_code", None) == 429:
+                # 剛好卡到額度上限只算一次，不當作真的超過；同一個冷卻窗口內
+                # 再中一次 429 才視為持續超過額度，才把 is_rate_limited 打開
+                # 給小工具顯示警告，避免單一次邊界值誤判嚇到使用者。
+                if now < self._rate_limit_hit_window_until:
+                    self._rate_limit_hits += 1
+                else:
+                    self._rate_limit_hits = 1
+                self._rate_limit_hit_window_until = now + RATE_LIMIT_COOLDOWN
+                if self._rate_limit_hits >= RATE_LIMIT_WARN_THRESHOLD:
+                    self._rate_limited_until = now + RATE_LIMIT_COOLDOWN
             logger.warning("fugle quote %s 失敗: %s", symbol, exc)
             return cached[1].model_copy() if cached else None
         quote = self._map_quote(symbol, raw)

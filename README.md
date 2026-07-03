@@ -8,8 +8,8 @@
 - **可拖曳**：直接拖曳到螢幕任意位置
 - **預設穿透滑鼠**：平常不會擋到你操作底下的視窗；滑鼠移到小工具上時才會接管
 - **Hover 展開**：滑鼠移上去會展開完整清單，移開不會自動收合，按面板上的「－」才會收合回只顯示加權指數
-- **最多可監看 5 檔**：股票或指數皆可，可輸入代號或中文名稱搜尋（自動補全）
-- **每 5 秒更新一次**（可調整）
+- **監看檔數無上限**：股票或指數皆可，可輸入代號或中文名稱搜尋（自動補全）。**注意 Fugle API 額度**，見下方說明
+- **更新頻率可調**：面板標題旁的下拉選單可切換 3 / 5 / 10 秒，預設 5 秒
 - **漲紅跌綠**：符合台股慣例
 
 預設會顯示加權指數，格式類似：
@@ -87,6 +87,21 @@ npm run dev         # 開發模式，改程式碼會自動熱重載
 curl http://127.0.0.1:8000/api/health
 ```
 
+## 開發
+
+`npm start`（以及 `./widget/start.sh`）跑的是**已經 build 好的 `widget/dist/`**，不會自動重新編譯或監看原始碼變化。改了 `widget/src/`（renderer）或 `widget/electron/`（主行程/preload）的程式碼後，要重新 build 才會生效：
+
+```bash
+cd widget
+npx tsc -b                          # 型別檢查 renderer
+npx tsc -p tsconfig.electron.json   # 型別檢查 electron 主行程/preload
+npx vite build                      # 重新 build 出 dist/
+```
+
+只改了 `src/` 底下的 React 文字/樣式（沒動 `electron/` 底下的 `.ts`）時，`tsc -p tsconfig.electron.json` 可以省略，跑 `npx vite build` 就好。build 完記得重啟小工具（`./widget/start.sh` 或你原本的啟動方式）。
+
+如果想要邊改邊看即時生效，開發時可以改用 `npm run dev` 取代 `npm start`/`start.sh`——那個模式會啟動 Vite dev server 做熱重載，不需要手動重新 build。
+
 ## 設定
 
 | 環境變數 | 說明 |
@@ -94,7 +109,7 @@ curl http://127.0.0.1:8000/api/health
 | `API_KEY` | 保護後端 API 的本機金鑰，Electron 主行程會自動讀取根目錄 `.env` |
 | `FUGLE_API_KEY` | 富果 MarketData 金鑰，未設定時小工具會顯示「尚未設定 FUGLE_API_KEY」 |
 
-更新頻率預設 5 秒一次，可在 `widget/src/App.tsx` 調整 `POLL_INTERVAL_MS`。**請注意你的 Fugle 方案額度**：小工具目前是每檔股票各別查詢（未批次打包），假設每 5 秒刷新、監看 5 檔，等於每分鐘打 60 次 API——免費方案常見額度是 60 次/分鐘，接近上限時建議拉長更新間隔或減少監看檔數。
+更新頻率可在面板標題旁的下拉選單切換 3 / 5 / 10 秒（存在本機設定檔，重開小工具會記住上次選擇）。監看檔數沒有上限，但**請注意你的 Fugle 方案額度**：小工具目前是每檔股票各別查詢（未批次打包），假設每 5 秒刷新、監看 N 檔，等於每分鐘打 N×12 次 API——免費方案常見額度是 60 次/分鐘，監看檔數變多時建議在下拉選單改選較長的更新間隔（10 秒）。
 
 ## 本機安全
 

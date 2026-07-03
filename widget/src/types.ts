@@ -12,13 +12,17 @@ export type WidgetQuote = {
 export type WidgetQuotesResponse = {
   fugle_enabled: boolean;
   quotes: WidgetQuote[];
+  rate_limited?: boolean;
   error?: string;
 };
 
 export type SymbolHit = { code: string; name: string };
 
+export type FlashDirection = "up" | "down" | "flat";
+
 export type WidgetState = {
   symbols: string[];
   windowX: number | null;
   windowY: number | null;
+  pollIntervalMs: number;
 };

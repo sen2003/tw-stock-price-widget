@@ -2,12 +2,11 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { SymbolHit } from "../types";
 
 type Props = {
-  disabled: boolean;
   excludeCodes: string[];
   onPick: (hit: SymbolHit) => void;
 };
 
-export default function SymbolAutocomplete({ disabled, excludeCodes, onPick }: Props) {
+export default function SymbolAutocomplete({ excludeCodes, onPick }: Props) {
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SymbolHit[]>([]);
   const [highlighted, setHighlighted] = useState(0);
@@ -69,9 +68,8 @@ export default function SymbolAutocomplete({ disabled, excludeCodes, onPick }: P
     <div className="autocomplete no-drag">
       <input
         type="text"
-        placeholder={disabled ? "已達 5 檔上限" : "輸入代號或名稱新增"}
+        placeholder="輸入代號或名稱新增"
         value={query}
-        disabled={disabled}
         onChange={(event) => setQuery(event.target.value)}
         onKeyDown={handleKeyDown}
       />

@@ -6,12 +6,14 @@ export type WidgetState = {
   symbols: string[];
   windowX: number | null;
   windowY: number | null;
+  pollIntervalMs: number;
 };
 
 const DEFAULT_STATE: WidgetState = {
   symbols: ["IX0001"],
   windowX: null,
-  windowY: null
+  windowY: null,
+  pollIntervalMs: 5000
 };
 
 function statePath(): string {

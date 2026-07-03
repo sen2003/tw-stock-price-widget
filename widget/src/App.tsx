@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Badge from "./components/Badge";
 import Panel from "./components/Panel";
-import type { SymbolHit, WidgetQuote } from "./types";
+import type { FlashDirection, SymbolHit, WidgetQuote } from "./types";
 
-const POLL_INTERVAL_MS = 5000;
-const MAX_SYMBOLS = 5;
+const DEFAULT_POLL_INTERVAL_MS = 5000;
 const HOVER_PADDING_PX = 10; // forgiving margin so the hit-test doesn't miss by a pixel
 const LEAVE_DELAY_MS = 250;
+const FLASH_DURATION_MS = 600; // 閃爍動畫播完要清掉 flash 狀態，下次更新才能重新觸發
 
 export default function App() {
   const [symbols, setSymbols] = useState<string[]>(["IX0001"]);
@@ -16,12 +16,18 @@ export default function App() {
   const [panelOpen, setPanelOpen] = useState(false);
   const [quotes, setQuotes] = useState<WidgetQuote[]>([]);
   const [fugleEnabled, setFugleEnabled] = useState(true);
+  const [rateLimited, setRateLimited] = useState(false);
+  const [pollIntervalMs, setPollIntervalMs] = useState(DEFAULT_POLL_INTERVAL_MS);
   const [ready, setReady] = useState(false);
+  // 只有加權指數（徽章）需要閃爍提示，個股清單不用。
+  const [primaryFlash, setPrimaryFlash] = useState<FlashDirection | undefined>(undefined);
   const symbolsRef = useRef(symbols);
   symbolsRef.current = symbols;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const interactiveRef = useRef(false);
   const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevPrimaryPriceRef = useRef<number | null | undefined>(undefined);
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Electron's forwarded mousemove (setIgnoreMouseEvents forward:true) does not
   // reliably drive native mouseenter/mouseleave — hit-test cursor position
@@ -89,11 +95,32 @@ export default function App() {
     window.widgetAPI.loadState().then((state) => {
       if (cancelled) return;
       setSymbols(state.symbols.length ? state.symbols : ["IX0001"]);
+      setPollIntervalMs(state.pollIntervalMs || DEFAULT_POLL_INTERVAL_MS);
       setReady(true);
     });
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  // 每次收到新報價都跟上一次加權指數的成交價比較，決定要不要閃一下（漲紅/
+  // 跌綠/平盤白）。第一次拿到報價時還沒有基準可比，跳過閃爍。閃完固定時間
+  // 後清掉 flash 狀態，class 被移除又重新加回去，CSS animation 才會在下次
+  // 更新時重新播放。
+  const applyPrimaryFlash = useCallback((newQuotes: WidgetQuote[]) => {
+    const primary = newQuotes.find((quote) => quote.symbol === symbolsRef.current[0]);
+    const prevPrice = prevPrimaryPriceRef.current;
+    const currPrice = primary?.deal_price ?? null;
+    if (prevPrice !== undefined && prevPrice !== null && currPrice !== null) {
+      const direction: FlashDirection = currPrice > prevPrice ? "up" : currPrice < prevPrice ? "down" : "flat";
+      setPrimaryFlash(direction);
+      if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+      flashTimerRef.current = setTimeout(() => {
+        flashTimerRef.current = null;
+        setPrimaryFlash(undefined);
+      }, FLASH_DURATION_MS);
+    }
+    prevPrimaryPriceRef.current = currPrice;
   }, []);
 
   useEffect(() => {
@@ -104,20 +131,28 @@ export default function App() {
       const response = await window.widgetAPI.getQuotes(symbolsRef.current);
       if (cancelled) return;
       setFugleEnabled(response.fugle_enabled);
+      setRateLimited(Boolean(response.rate_limited));
+      applyPrimaryFlash(response.quotes);
       setQuotes(response.quotes);
     }
 
     poll();
-    const timer = setInterval(poll, POLL_INTERVAL_MS);
+    const timer = setInterval(poll, pollIntervalMs);
     return () => {
       cancelled = true;
       clearInterval(timer);
     };
-  }, [ready, symbols]);
+  }, [ready, symbols, pollIntervalMs, applyPrimaryFlash]);
+
+  useEffect(() => {
+    return () => {
+      if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    };
+  }, []);
 
   const handleAdd = useCallback((hit: SymbolHit) => {
     setSymbols((prev) => {
-      if (prev.includes(hit.code) || prev.length >= MAX_SYMBOLS) return prev;
+      if (prev.includes(hit.code)) return prev;
       const next = [...prev, hit.code];
       window.widgetAPI.saveState({ symbols: next });
       return next;
@@ -136,6 +171,11 @@ export default function App() {
     setPanelOpen(false);
   }, []);
 
+  const handleIntervalChange = useCallback((ms: number) => {
+    setPollIntervalMs(ms);
+    window.widgetAPI.saveState({ pollIntervalMs: ms });
+  }, []);
+
   const handleQuit = useCallback(() => {
     window.widgetAPI.quit();
   }, []);
@@ -147,7 +187,7 @@ export default function App() {
   return (
     <div ref={containerRef} className="hover-zone">
       <div className="drag-handle">
-        <Badge quote={primaryQuote} fugleEnabled={fugleEnabled} />
+        <Badge quote={primaryQuote} fugleEnabled={fugleEnabled} rateLimited={rateLimited} flash={primaryFlash} />
       </div>
       {panelOpen && (
         <Panel
@@ -155,10 +195,13 @@ export default function App() {
           allSymbols={symbols}
           visibleSymbols={symbols.slice(1)}
           fugleEnabled={fugleEnabled}
+          rateLimited={rateLimited}
+          pollIntervalMs={pollIntervalMs}
           onAdd={handleAdd}
           onRemove={handleRemove}
           onMinimize={handleCollapse}
           onQuit={handleQuit}
+          onIntervalChange={handleIntervalChange}
         />
       )}
     </div>

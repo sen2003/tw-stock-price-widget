@@ -57,6 +57,12 @@ body,
   font-size: 12px;
 }
 
+.badge-rate-warning {
+  color: #f2c94c;
+  font-size: 11px;
+  margin-left: 2px;
+}
+
 .badge-name {
   font-weight: 600;
   margin-right: 2px;
@@ -79,6 +85,48 @@ body,
   color: #c9c9c9;
 }
 
+/* 加權指數徽章更新時的輕微閃爍：漲紅、跌綠、平盤白，跟 .dir-* 控制的文字
+   顏色是分開的兩件事。結尾淡回徽章本來的底色（而不是 transparent），收尾
+   才不會有動畫播完瞬間跳色的問題。 */
+@keyframes flash-pulse-up {
+  from {
+    background-color: rgba(255, 92, 92, 0.55);
+  }
+  to {
+    background-color: rgba(20, 20, 24, 0.85);
+  }
+}
+
+@keyframes flash-pulse-down {
+  from {
+    background-color: rgba(61, 220, 132, 0.55);
+  }
+  to {
+    background-color: rgba(20, 20, 24, 0.85);
+  }
+}
+
+@keyframes flash-pulse-flat {
+  from {
+    background-color: rgba(255, 255, 255, 0.45);
+  }
+  to {
+    background-color: rgba(20, 20, 24, 0.85);
+  }
+}
+
+.flash-up {
+  animation: flash-pulse-up 0.6s ease-out;
+}
+
+.flash-down {
+  animation: flash-pulse-down 0.6s ease-out;
+}
+
+.flash-flat {
+  animation: flash-pulse-flat 0.6s ease-out;
+}
+
 .panel {
   margin-top: 6px;
   width: 260px;
@@ -96,9 +144,34 @@ body,
   margin-bottom: 6px;
 }
 
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .panel-title {
   font-weight: 600;
   opacity: 0.85;
+}
+
+.interval-select {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e8e8;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 2px;
+  cursor: pointer;
+}
+
+/* Chromium 展開下拉清單時是原生彈出視窗，不會套用 <select> 本身的
+   半透明背景（透明背景會被畫成不透明的系統色，多半是白底），只有直接
+   寫在 <option> 上的 background/color 才會被套用，所以要在這裡明寫
+   深色底、淺色字，不然選單展開時會變成淺字配淺底看不清楚。 */
+.interval-select option {
+  background: #1c1c22;
+  color: #e8e8e8;
 }
 
 .panel-header-actions button {

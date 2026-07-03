@@ -14,6 +14,7 @@ export type WidgetQuote = {
 export type WidgetQuotesResponse = {
   fugle_enabled: boolean;
   quotes: WidgetQuote[];
+  rate_limited?: boolean;
 };
 
 export type SymbolHit = { code: string; name: string };
@@ -22,6 +23,7 @@ export type WidgetState = {
   symbols: string[];
   windowX: number | null;
   windowY: number | null;
+  pollIntervalMs: number;
 };
 
 contextBridge.exposeInMainWorld("widgetAPI", {

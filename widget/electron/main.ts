@@ -110,7 +110,7 @@ function startWatchdog(): void {
 
 function registerIpcHandlers(): void {
   ipcMain.handle("widget:get-quotes", async (_event, symbols: string[]) => {
-    const query = encodeURIComponent((symbols || []).slice(0, 5).join(","));
+    const query = encodeURIComponent((symbols || []).join(","));
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/api/widget/quotes?symbols=${query}`, {
         headers: apiHeaders()

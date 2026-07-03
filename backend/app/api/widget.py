@@ -42,11 +42,15 @@ def _to_widget_quote(symbol: str, quote) -> WidgetQuote:
 @router.get("/quotes", dependencies=[Depends(require_api_key)])
 def widget_quotes(symbols: str = Query(..., min_length=1)) -> dict[str, object]:
     fugle = get_fugle()
-    selected = [item.strip().upper() for item in symbols.split(",") if item.strip()][:5]
+    selected = [item.strip().upper() for item in symbols.split(",") if item.strip()]
     if not fugle.enabled:
         return {"fugle_enabled": False, "quotes": []}
     quotes = [_to_widget_quote(symbol, fugle.get_quote(symbol)) for symbol in selected]
-    return {"fugle_enabled": True, "quotes": [quote.model_dump() for quote in quotes]}
+    return {
+        "fugle_enabled": True,
+        "quotes": [quote.model_dump() for quote in quotes],
+        "rate_limited": fugle.is_rate_limited
+    }
 
 
 @router.get("/symbols/search")
