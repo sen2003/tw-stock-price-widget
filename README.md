@@ -74,6 +74,8 @@ npm run dev         # 開發模式，改程式碼會自動熱重載
 ./widget/stop.sh    # 關閉小工具，順便關掉後端
 ```
 
+`.sh` 是 bash 腳本，只有 **Git Bash** 看得懂，cmd.exe 和 PowerShell 不能直接執行。在 Git Bash 裡可以直接 `./widget/start.sh`；如果要在 cmd/PowerShell 下跑，得明確叫 bash 執行，例如 `bash widget/start.sh`（前提是 Git 的 `bash.exe` 有在 PATH 裡），否則系統不知道該用什麼程式打開 `.sh` 檔。
+
 驗證後端：
 
 ```bash
