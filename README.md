@@ -70,11 +70,9 @@ npm run dev         # 開發模式，改程式碼會自動熱重載
 **僅限 Windows + Git Bash**（用到 `taskkill`/`powershell.exe`，macOS/Linux 無法使用，請照上面手動指令啟停）：
 
 ```bash
-./widget/start.sh   # 會自動檢查/啟動後端，再啟動小工具
-./widget/stop.sh    # 關閉小工具，順便關掉後端
+./widget/bash start.sh   # 會自動檢查/啟動後端，再啟動小工具
+./widget/bash stop.sh    # 關閉小工具，順便關掉後端
 ```
-
-`.sh` 是 bash 腳本，只有 **Git Bash** 看得懂，cmd.exe 和 PowerShell 不能直接執行。在 Git Bash 裡可以直接 `./widget/start.sh`；如果要在 cmd/PowerShell 下跑，得明確叫 bash 執行，例如 `bash widget/start.sh`（前提是 Git 的 `bash.exe` 有在 PATH 裡），否則系統不知道該用什麼程式打開 `.sh` 檔。
 
 驗證後端：
 
@@ -105,7 +103,7 @@ npx vite build                      # 重新 build 出 dist/
 | `API_KEY` | 保護後端 API 的本機金鑰，Electron 主行程會自動讀取根目錄 `.env` |
 | `FUGLE_API_KEY` | 富果 MarketData 金鑰，未設定時小工具會顯示「尚未設定 FUGLE_API_KEY」 |
 
-更新頻率可在面板標題旁的下拉選單切換 3 / 5 / 10 秒（存在本機設定檔，重開小工具會記住上次選擇）。監看檔數沒有上限，但**請注意你的 Fugle API 方案額度**：小工具目前是每檔股票各別查詢（未批次打包），假設每 5 秒刷新、監看 N 檔，等於每分鐘打 N×12 次 API——免費方案常見額度是 60 次/分鐘，根據 API 額度自行設定更新頻率和監看檔數。
+更新頻率可在面板標題旁的下拉選單切換 3 / 5 / 10 秒（存在本機設定檔，重開小工具會記住上次選擇）。監看檔數沒有上限，但**請注意你的 Fugle API 方案額度**：小工具目前是每檔股票各別查詢（未批次打包），假設每 5 秒刷新、監看 N 檔，等於每分鐘打 N×12 次 API——免費方案常見額度是 60 次/分鐘，根據 API 額度自行調整更新頻率和監看檔數。
 
 ## 本機安全
 
