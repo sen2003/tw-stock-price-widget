@@ -21,6 +21,7 @@ export default function App() {
   const [ready, setReady] = useState(false);
   // 只有加權指數（徽章）需要閃爍提示，個股清單不用。
   const [primaryFlash, setPrimaryFlash] = useState<FlashDirection | undefined>(undefined);
+  const [now, setNow] = useState<Date>(new Date());
   const symbolsRef = useRef(symbols);
   symbolsRef.current = symbols;
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -88,6 +89,12 @@ export default function App() {
       }
       interactiveRef.current = false;
     });
+  }, []);
+
+  // 徽章上的時間是持續走動的時鐘，跟報價輪詢無關——不是「最後更新時間」。
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -187,7 +194,13 @@ export default function App() {
   return (
     <div ref={containerRef} className="hover-zone">
       <div className="drag-handle">
-        <Badge quote={primaryQuote} fugleEnabled={fugleEnabled} rateLimited={rateLimited} flash={primaryFlash} />
+        <Badge
+          quote={primaryQuote}
+          fugleEnabled={fugleEnabled}
+          rateLimited={rateLimited}
+          flash={primaryFlash}
+          now={now}
+        />
       </div>
       {panelOpen && (
         <Panel

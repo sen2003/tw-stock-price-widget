@@ -4,9 +4,11 @@ import {
   arrow,
   directionClass,
   formatChange,
+  formatDisplayName,
   formatPercent,
   formatPrice,
   formatVolume,
+  isIndexSymbol,
 } from "../format";
 import SymbolAutocomplete from "./SymbolAutocomplete";
 
@@ -110,14 +112,14 @@ export default function Panel({
       <div className="panel-list" ref={listRef}>
         {visibleSymbols.map((code, index) => {
           const quote = quoteBySymbol.get(code);
-          const isIndex = code.toUpperCase().startsWith("IX");
+          const isIndex = isIndexSymbol(code);
           return (
             <div
               className={`panel-item ${index > 0 ? "panel-item-separated" : ""}`}
               key={code}
             >
               <div className="panel-item-row">
-                <span className="panel-item-name">{quote?.name || code}</span>
+                <span className="panel-item-name">{quote ? formatDisplayName(quote) : code}</span>
                 <button
                   className="remove-btn"
                   title="移除"

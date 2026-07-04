@@ -33,8 +33,8 @@ body,
 
 .badge {
   display: flex;
-  align-items: baseline;
-  gap: 5px;
+  flex-direction: column;
+  gap: 2px;
   padding: 6px 10px;
   border-radius: 8px;
   background: rgba(20, 20, 24, 0.85);
@@ -46,10 +46,23 @@ body,
   overflow: hidden;
 }
 
+.badge-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.badge-timestamp {
+  color: #fff;
+  font-size: 12px;
+  opacity: 0.9;
+  text-align: center;
+}
+
 .badge-name {
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 110px;
+  max-width: 140px;
 }
 
 .badge-warning {
